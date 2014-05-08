@@ -1,0 +1,210 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Documento sin título</title>
+
+<link href="css/jquery.mobile.theme-1.0.min.css" rel="stylesheet" type="text/css"/>
+<link href="css/jquery.mobile.structure-1.0.min.css" rel="stylesheet" type="text/css"/>
+
+<script src="phonegap.js"></script>
+<script src="js/jquery-1.6.4.min.js" type="text/javascript"></script>
+<script src="js/jquery.mobile-1.0.min.js" type="text/javascript"></script>
+
+
+<script type="text/javascript">
+document.addEventListener("deviceready",function(){
+	alert('hasta aqui');
+
+	var boton=$("#guardar");
+	boton.tap(function(){
+			alert('si funciona');
+    var mar=$("#marca").val();
+    var mod=$("#modelo").val();	
+    var col=$("#color").val();	
+    var pre=$("#precio").val();	
+	if(mar!="" && mod!="" && col!="" && pre!=""){
+	enviar(mar,mod,col,pre);
+	}else{
+		alert('Favor de registrar datos en los campos');
+		}
+	
+	});
+	
+	 var btnconsulta=$("#consultar");
+  btnconsulta.tap(function(){
+	 
+	  $.ajax({
+		  type:"POST",
+		  url:"consulta.php",
+		  data:"",
+		  success: consultando
+		  });
+	  });
+  },false);
+
+
+//servidor enviar un registro
+function enviar(mar,mod,col,pre){
+	$.ajax({
+		type: "POST",
+		//url: "http://itslmoviles.260mb.net/procesar.php",
+		url: "procesar.php",
+		data:({ Marca:mar,Modelo:mod,Color:col,Precio:pre}),
+		success: onSuccess
+	}).done(function(msg){
+		if(msg==1){
+				
+		}else{
+		}
+	});
+	function onSuccess(data){
+		alert(data);
+		}
+	
+}
+function consultando(data){
+	var registro=$.parseJSON(data);
+	var mostrar=$("#datos");
+	for( var i in registro){
+		mostrar.append("<table><tr><td>Id</td><td>"+registro[i].idauto+"</td></tr><tr><td>Marca</td><td>"+registro[i].Marca+"</td></tr><tr><td>Modelo</td><td>"+registro[i].Modelo+"</td></tr><tr><td>Color</td><td>"+registro[i].Color+"</td></tr><tr><td>Registro</td><td>"+registro[i].Precio+"</td></tr></table><br>");
+		}
+	
+//	alert(data);/
+	}
+</script>
+
+
+<script type="text/javascript">
+$(function(){
+$("#actua").click(function(){
+	//alert("Ejecucion correcta del boton");
+	var marA=$("#marcaan").val();
+	//alert("Nombre: "+nombre);
+	var marN=$("#marcanu").val();
+$.ajax({
+	type:"GET",
+	url:"actualizar.php",
+	data:({MarAntigua:marA,MarNueva:marN}),
+	cache:false,
+	dataType:"text",
+	success:exitosa
+});
+	})
+function exitosa(data){
+alert(data);
+}
+});
+</script>
+
+<script type="text/javascript">
+$(function(){
+$("#elimina").click(function(){
+	//alert("Ejecucion correcta del boton");
+	var marEl=$("#marcaElimi").val();
+$.ajax({
+	type:"GET",
+	url:"eliminar.php",
+	data:({MarEl:marEl}),
+	cache:false,
+	dataType:"text",
+	success:exitosa
+});
+	})
+function exitosa(data){
+alert(data);
+}
+});
+</script>
+
+
+
+
+</head>
+
+<body>
+<div data-role="page" id="principal">
+<div data-role="header">
+<p align="center">Principal</p>
+</div>
+<div data-role="content">
+<a href="#captura" data-role="button">Capturar</a>
+<a href="#consultas" data-role="button">Consultas</a>
+<a href="#actualizar" data-role="button">Actualizar</a>
+<a href="#eliminar" data-role="button">Eliminar</a>
+</div>
+<div data-role="footer">
+
+</div>
+</div>
+
+<div data-role="page" id="captura">
+<div data-role="header">
+<p align="center">Captura</p>
+</div>
+<div data-role="content">
+<ul data-role="listview">
+            <li><input type="text" id="marca" placeholder="Marca" /></li>
+            <li><input type="text" id="modelo" placeholder="Modelo" /></li>
+            <li><input type="text" id="color" placeholder="Color" /></li>       
+            <li><input type="text" id="precio" placeholder="Precio" /></li>   
+        </ul>
+</div>
+<div data-role="footer" align="center">
+<a href="#" data-role="button" id="guardar">(: Guardar :)</a>
+<a href="#principal" data-role="button" >Menu Principal</a>
+</div>
+</div>
+
+<div data-role="page" id="consultas"> 
+<div data-role="header">
+<p align="center">Consultas</p>
+</div>
+<div data-role="content">
+<p align="center">Datos</p>
+<a href="#" id="consultar" data-role="button">Consultar</a>
+<div id="datos">
+</div>
+</div>
+<div data-role="footer" align="center">
+<a href="#principal" data-role="button" >Menu Principal</a>
+</div>
+</div>
+
+
+<div data-role="page" id="actualizar">
+<div data-role="header">
+
+<p align="center">Actualizar datos</p>
+</div>
+<div data-role="content">
+<p>Marca Antigua: <input type="text" id="marcaan" name="marcaan" /></p>
+<p>Marca Nueva: <input type="text" id="marcanu" name="marcanu" /></p>
+
+</div>
+<div data-role="footer" align="center">
+<a href="#" data-role="button" id="actua">Actualizar</a>
+<a href="#principal" data-role="button" >Menu Principal</a>
+</div>
+</div>
+
+
+<div data-role="page" id="eliminar">
+<div data-role="header">
+<p align="center">Actualizar datos</p>
+</div>
+<div data-role="content">
+<form action="eliminar.php" method="get">
+<p>Marca A Eliminar: <input type="text" id="marcaElimi" name="marcaElimi" /></p>
+<input type="submit" value="elimina" />
+</form>
+</div>
+<div data-role="footer" align="center">
+<a href="#" data-role="button" id="elimina">Eliminar</a>
+<a href="#principal" data-role="button" >Menu Principal</a>
+</div>
+</div>
+
+</body>
+</html>
